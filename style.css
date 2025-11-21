@@ -144,6 +144,27 @@ body {
 /* Ensure video respects column layout and is responsive */
 .background-inner video { width: 100%; height: auto; display: block; margin-bottom: 5px; }
 
+.gold-metallic {
+  background: linear-gradient(
+    to right, 
+    #b99341 0%, 
+    #f0e6c8 25%, 
+    #d4a017 50%, 
+    #f0e6c8 75%, 
+    #b99341 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+    /* outline */
+  -webkit-text-stroke: 1px black;  /* adjust thickness + color */
+
+  /* size control */
+  font-size: 48px;  /*change as needed */
+  font-weight: 700; /* makes the gradient look better */
+}
+
+
 /* Mobile */
 @media screen and (max-width: 600px) {
   .box { padding: 20px 10px; }
