@@ -223,7 +223,39 @@ async function initVideo() {
           console.info('[hls] manifest parsed; starting playback');
           video.play().catch(()=>{});
         });
-        hls.on(Hls.Events.ERROR, function(evt, data) { console.warn('[hls] error', evt, data); });
+        hls.on(Hls.Events.ERROR, function(evt, data) {
+          console.warn('[hls] error', evt, data);
+          try {
+            const details = data && data.details ? data.details : '';
+            const type = data && data.type ? data.type : '';
+
+            // If we see buffer holes, try switching to the lowest quality level
+            if (type === Hls.ErrorTypes.MEDIA_ERROR && details && details.toString().toLowerCase().includes('buffer')) {
+              console.warn('[hls] buffer issue detected — attempting lower quality or fallback');
+              if (hls.levels && hls.levels.length > 1) {
+                try {
+                  hls.nextLevel = 0;
+                  hls.startLevel = 0;
+                  hls.loadLevel = 0;
+                  console.info('[hls] requested lowest quality');
+                } catch (e) { console.warn('[hls] failed to change level', e); }
+              } else {
+                // No levels to switch; fallback to MP4 preview if available
+                const preview = video.dataset.preview || null;
+                if (preview) {
+                  try {
+                    hls.destroy();
+                    video.src = preview;
+                    video.load();
+                    video.play().catch(()=>{});
+                    console.info('[hls] falling back to MP4 preview');
+                    return;
+                  } catch (e) { console.warn('[hls] fallback failed', e); }
+                }
+              }
+            }
+          } catch (e) { /* ignore error handling problems */ }
+        });
         return;
       }
       console.warn('[hls] Hls is present but not supported in this environment');
