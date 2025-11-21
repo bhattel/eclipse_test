@@ -25,6 +25,8 @@ async function loadSequentialUntilCovered() {
     let manifest = await tryFetch('images/optimized/manifest.json');
     if (!manifest) manifest = await tryFetch('images.optimized.json') || {};
     const files = Object.keys(manifest || {});
+    console.info('[loader] optimized manifest entries:', files.length);
+    if (!files.length) console.warn('[loader] No optimized manifest entries found. Check deployment.');
 
     const CONCURRENCY = 4; // increase concurrent loads a bit
     const PRIORITY_COUNT = 6; // first N images start immediately
@@ -201,20 +203,30 @@ async function initVideo() {
     }
   } catch (e) { /* ignore overlay wiring errors */ }
 
+  // If a loader exposed `window.__hlsReady`, wait for it so Hls is available
+  if (window.__hlsReady && typeof window.__hlsReady.then === 'function') {
+    console.info('[hls] waiting for loader to provide Hls...');
+    try { await window.__hlsReady; console.info('[hls] Hls is available'); } catch (e) { console.warn('[hls] loader failed', e); }
+  }
+
   // Try using HLS first when hls.js is available. Don't rely on a HEAD request
   // because some hosts block HEAD or Pages may behave differently.
   const hlsUrl = 'video/playlist.m3u8';
   try {
     if (window.Hls) {
+      console.info('[hls] initializing hls.js');
       if (Hls.isSupported()) {
         const hls = new Hls({ maxBufferLength: 30 });
         hls.loadSource(hlsUrl);
         hls.attachMedia(video);
         hls.on(Hls.Events.MANIFEST_PARSED, function() {
+          console.info('[hls] manifest parsed; starting playback');
           video.play().catch(()=>{});
         });
+        hls.on(Hls.Events.ERROR, function(evt, data) { console.warn('[hls] error', evt, data); });
         return;
       }
+      console.warn('[hls] Hls is present but not supported in this environment');
     }
 
     // If the browser can play HLS natively (Safari), set the src directly
