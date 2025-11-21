@@ -20,17 +20,11 @@ async function loadSequentialUntilCovered() {
       return null;
     }
 
-    // First try a simple array-based manifest `images.json` (preferred)
-    let files = await tryFetch('images.json');
-
-    // If `images.json` missing or not an array, fall back to optimized manifests
-    let manifest = null;
-    if (!files || !Array.isArray(files)) {
-      const rootManifest = await tryFetch('images.optimized.json');
-      const optManifest = await tryFetch('images/optimized/manifest.json');
-      manifest = Object.assign({}, rootManifest || {}, optManifest || {});
-      files = Object.keys(manifest || {});
-    }
+    // Prefer using the optimized manifest so the site always serves optimized images.
+    // Fall back to any other manifest if the optimized one isn't available.
+    let manifest = await tryFetch('images/optimized/manifest.json');
+    if (!manifest) manifest = await tryFetch('images.optimized.json') || {};
+    const files = Object.keys(manifest || {});
 
     const CONCURRENCY = 4; // increase concurrent loads a bit
     const PRIORITY_COUNT = 6; // first N images start immediately
@@ -207,11 +201,11 @@ async function initVideo() {
     }
   } catch (e) { /* ignore overlay wiring errors */ }
 
-  // If an HLS playlist exists, try HLS first (HLS will be handled by consumer of hls.js if present)
+  // Try using HLS first when hls.js is available. Don't rely on a HEAD request
+  // because some hosts block HEAD or Pages may behave differently.
   const hlsUrl = 'video/playlist.m3u8';
   try {
-    const head = await fetch(hlsUrl, { method: 'HEAD' });
-    if (head.ok && window.Hls) {
+    if (window.Hls) {
       if (Hls.isSupported()) {
         const hls = new Hls({ maxBufferLength: 30 });
         hls.loadSource(hlsUrl);
@@ -220,14 +214,17 @@ async function initVideo() {
           video.play().catch(()=>{});
         });
         return;
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = hlsUrl;
-        video.addEventListener('loadedmetadata', function() { video.play().catch(()=>{}); });
-        return;
       }
     }
+
+    // If the browser can play HLS natively (Safari), set the src directly
+    if (video.canPlayType && video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = hlsUrl;
+      video.addEventListener('loadedmetadata', function() { video.play().catch(()=>{}); });
+      return;
+    }
   } catch (e) {
-    // no HLS available
+    // ignore HLS initialization errors and continue to MP4 fallback
   }
 
   // If no HLS, try preview->full swap. Use data attributes for links if available.
