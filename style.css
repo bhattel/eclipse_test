@@ -1,0 +1,150 @@
+/* Fonts */
+@font-face {
+  font-family: 'BoP_font';
+  src: url('fonts/BoP_font.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Bakersville_font';
+  src: url('fonts/Baskervville_BI.ttf') format('truetype');
+}
+
+/* Body */
+body {
+  margin: 0;
+  font-family: 'Bakersville_font', serif;
+  color: white;
+  overflow-x: hidden;
+  background: black;
+}
+
+/* Background */
+.background-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  overflow: hidden;
+}
+
+.background-inner {
+  position: relative;
+  /* position: absolute; */
+  top: 0;
+  left: 0;
+  width: 100%;
+  column-width: 250px;
+  column-gap: 5px;
+}
+
+.background-inner img {
+  width: 100%;
+  margin-bottom: 5px;
+  display: block;
+  object-fit: cover;
+  /* Smooth transition from low-quality placeholder -> full image */
+  transition: opacity 360ms ease, filter 360ms ease;
+  opacity: 0.95;
+  filter: blur(6px);
+}
+
+.background-inner img.loaded {
+  filter: none;
+  opacity: 1;
+}
+
+.background-inner img.placeholder {
+  /* optional subtle dim for placeholders */
+  opacity: 0.85;
+}
+
+/* Overlay */
+.overlay {
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.45);
+  z-index:-1;
+  pointer-events:none;
+}
+
+/* Box content */
+.box {
+  background: rgba(255,255,255,0.75);
+  padding: 40px 30px;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  max-width: 900px;
+  margin: 40px auto;
+  color: #222;
+}
+
+.box h1, .box h2 {
+  text-align: center;
+  font-family: 'BoP_font', sans-serif;
+}
+
+.box p {
+  margin-bottom: 1.2em;
+}
+
+.box p.signature {
+  text-align: right;
+  font-style: italic;
+}
+
+/* Video centered */
+#videoContainer {
+  text-align: center;
+  margin: 20px auto;
+}
+
+#videoContainer video {
+  width: 100%;
+  max-width: 800px;
+  border-radius: 16px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.6);
+}
+
+/* Sound hint overlay styles */
+#videoContainer { position: relative; }
+.sound-hint {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  color: #fff;
+  z-index: 3;
+  /* Let clicks pass through to the video except where the button sits. */
+  pointer-events: none;
+}
+.sound-hint .hint-inner {
+  position: static;
+  padding: 0;
+}
+.sound-hint .hint-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #ffffff;
+  color: #222;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  /* Make button interactive while overlay remains non-interactive */
+  pointer-events: auto;
+}
+.sound-hint[aria-hidden="true"] { display: none; }
+
+/* Ensure video respects column layout and is responsive */
+.background-inner video { width: 100%; height: auto; display: block; margin-bottom: 5px; }
+
+/* Mobile */
+@media screen and (max-width: 600px) {
+  .box { padding: 20px 10px; }
+}

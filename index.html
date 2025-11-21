@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Wedding Eclipse</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- Background container -->
+  <div class="background-grid" id="backgroundGrid">
+    <!--
+      Background images are loaded sequentially in the order they appear in images.json.
+      Loading uses native lazy-loading and stops once the background content height
+      exceeds viewport * COVER_MULTIPLIER (see script.js).
+    -->
+    <div class="background-inner" id="backgroundInner"></div>
+  </div>
+
+  <!-- Semi-transparent overlay -->
+  <div class="overlay"></div>
+
+  <!-- Main content box -->
+  <div class="box">
+
+    <!-- Heading -->
+    <h1>The Hattel Wedding Eclipse</h1>
+
+    <!-- Text above video -->
+    <p class="video-text">
+      On October 4th, 2025, we stood before a celestial backdrop and celebrated our love.
+      Our solar eclipse centerpiece was more than just a decoration — it was meant to be a shimmering focal point that
+      started our ceremony.
+      High winds and technical challenges kept us from sharing its full magic that day, so below is a video showing how
+      it was meant to shine.
+    </p>
+
+    <!-- Video -->
+    <div id="videoContainer">
+      <!--
+        For large video files, serving HLS (playlist.m3u8 + segments) greatly
+        improves start-up and adaptive playback. The page attempts to load
+        `video/playlist.m3u8` via `hls.js` (if present) and falls back to a
+        local MP4 preview (see `video/preview.mp4`).
+        - Generate HLS using `tools/generate_hls.ps1` (requires ffmpeg).
+        - Place `hls.min.js` into `libs/hls.min.js` (see `libs/README.md`).
+      -->
+      <video id="mainVideo" autoplay muted playsinline controls preload="auto" poster="images/optimized/IMG_8081-900.webp" data-preview="vid/Wedding_Ecl_Vid.mp4" data-full="vid/Wedding_Ecl_Vid.mp4">
+        <source src="vid/Wedding_Ecl_Vid.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+
+      <!-- Unmute hint overlay (shows until user explicitly unmutes/plays) -->
+      <div id="soundHint" class="sound-hint" aria-hidden="false">
+        <div class="hint-inner">
+          <button id="unmuteBtn" class="hint-btn" type="button">Tap for Sound</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Story section -->
+    <h2>Story Behind the Eclipse</h2>
+    <p>
+      The idea for the eclipse centerpiece came to me in April 2025, a year after my wife and I got engaged during a
+      solar eclipse in Mazatlán, Mexico — our second one together. That moment was unforgettable, and I wanted to
+      capture some of that same wonder and joy for our ceremony with a glowing, celestial focal point timed to music
+      from my favorite band.
+    </p>
+    <p>
+      Building the eclipse from scratch came with challenges, but also with growth and discovery. Over several months, I
+      learned three coding languages, how to solder circuit boards, mix audio, and even pour epoxy resin. I explored
+      how to use microcontrollers to manipulate LEDs and wrote over 1,100 lines of code to control the eclipse through
+      a laptop interface.
+    </p>
+    <p>
+      With help from one of my groomsmen, I built the structure from plywood, plexiglass, and steel pipe.
+      My brother transformed a blank piece of foam board into a stunning moon, while I printed an image of the sun
+      on semi-translucent film and mounted it with clear epoxy resin. To complete the vision, I edited a song by
+      splicing, stretching, and combining sections so that it would peak just as the eclipse reached totality —
+      perfectly timed with the wedding party's walk down the aisle.
+    </p>
+    <p>
+      On the day of the wedding, however, high winds delayed setup, and some WiFi hiccups seemed to conspire against us,
+      so the eclipse never fully came to life in that moment. Considering all the hard work that went into the project,
+      I wanted to at least provide a glimpse of what the eclipse was meant to be, and I hope the video above provides
+      that.
+    </p>
+    <p>
+      I'm grateful to everyone who helped along the way — Chris Miller for construction, my brother Ross for the moon
+      artwork, George Bailey and George McCabe for their LED guidance, Access Printing for the flawless sun print, and
+      Bri Wolf along with John and James Harmon for their help in bringing the project across the finish line.
+    </p>
+    <p>
+      And finally, while the eclipse didn't shine as planned, my disappointment was short-lived — because on that day,
+      in front of friends and family, I married the love of my life. And no project, no matter how big, could ever
+      eclipse that.
+    </p>
+    <p class="signature">— Brian</p>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
