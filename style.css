@@ -87,6 +87,16 @@ body {
   font-family: 'BoP_font', sans-serif;
 }
 
+/* Title image styling — keep images centered and sized like text */
+.title-img {
+  display: block;
+  margin: 0.15em auto 0.6em auto;
+  max-width: 100%;
+  height: auto;
+}
+.title-img--large { max-height: 3.2rem; }
+.title-img--small { max-height: 2.2rem; }
+
 .box p {
   margin-bottom: 1.2em;
 }
